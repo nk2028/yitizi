@@ -1,0 +1,59 @@
+name: Package
+
+on:
+  release:
+    types: [created]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    # Prepare Python environment
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install setuptools wheel twine
+        pip install networkx
+    - name: Build yitizi.json
+      run: python build/main.py
+
+    # Packaging for Python
+    - name: Build for Python
+      run: |
+        cp LICENSE README.md python
+        mkdir python/demo && cp demo/*.png python/demo
+        cp yitizi.json python/src/yitizi
+    - name: Publish for Python
+      env:
+        TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
+        TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
+      run: |
+        cd python
+        python setup.py sdist bdist_wheel
+        twine upload dist/*
+
+    # Prepare Node.js environment
+    - name: Setup Node.js
+      uses: actions/setup-node@v1
+      with:
+        node-version: 14
+        registry-url: https://registry.npmjs.org/
+
+    # Packaging for Node.js
+    - name: Build for Node.js
+      run: |
+        cp LICENSE README.md javascript
+        mkdir javascript/demo && cp demo/*.png javascript/demo
+        build/javascript.sh
+    - name: Publish
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      run: |
+        cd javascript
+        npm publish

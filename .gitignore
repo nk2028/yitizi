@@ -1,0 +1,13 @@
+/.vscode
+/.mypy_cache
+
+/*/**/LICENSE
+/*/**/README.md
+
+/python/build
+/python/dist
+/python/**/*.egg-info
+
+/javascript/index.js
+
+yitizi.json

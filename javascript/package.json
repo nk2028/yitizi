@@ -1,0 +1,23 @@
+{
+  "name": "yitizi",
+  "version": "0.0.1",
+  "description": "Input a Chinese character. Output all the variant characters of it.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nk2028/yitizi.git"
+  },
+  "keywords": [
+    "nlp",
+    "chinese"
+  ],
+  "author": "Ngiox Khyen 2028 Project",
+  "license": "CC0-1.0",
+  "bugs": {
+    "url": "https://github.com/nk2028/yitizi/issues"
+  },
+  "homepage": "https://github.com/nk2028/yitizi#readme"
+}
