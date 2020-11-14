@@ -27,7 +27,6 @@ jobs:
     - name: Build for Python
       run: |
         cp LICENSE README.md python
-        mkdir python/demo && cp demo/*.png python/demo
         cp yitizi.json python/src/yitizi
     - name: Publish for Python
       env:
@@ -49,7 +48,6 @@ jobs:
     - name: Build for Node.js
       run: |
         cp LICENSE README.md javascript
-        mkdir javascript/demo && cp demo/*.png javascript/demo
         build/javascript.sh
     - name: Publish
       env:

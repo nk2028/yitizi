@@ -12,7 +12,7 @@ with open(path.join(here, 'README.md'), encoding='utf8') as f:
 
 setup(
     name='yitizi',
-    version='0.0.1',
+    version='0.0.2',
     description='Input a Chinese character. Output all the variant characters of it.',
     long_description=long_description,
     long_description_content_type='text/markdown',
