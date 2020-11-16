@@ -1,0 +1,9 @@
+digraph G {
+    正字1 [fillcolor=grey, style=filled, pos="0.25,1!"]
+    正字2 [fillcolor=grey, style=filled, pos="1.5,1!"]
+    異體字1 [pos="0,0!"]
+    異體字2 [pos="1.75,0!"]
+    正字1 -> 異體字1
+    正字2 -> 異體字1
+    正字2 -> 異體字2
+}
