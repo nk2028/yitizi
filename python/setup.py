@@ -12,7 +12,7 @@ with open(path.join(here, 'README.md'), encoding='utf8') as f:
 
 setup(
     name='yitizi',
-    version='0.0.2',
+    version='0.0.3',
     description='Input a Chinese character. Output all the variant characters of it.',
     long_description=long_description,
     long_description_content_type='text/markdown',
@@ -20,12 +20,14 @@ setup(
     author='Ngiox Khyen 2028 Project',
     author_email='support@nk2028.shn.hk',
     classifiers=[
-        'Development Status :: 4 - Beta',
+        'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',
+        'Intended Audience :: Education',
         'Topic :: Software Development :: Libraries :: Python Modules',
         'Topic :: Text Processing :: Linguistic',
         'Natural Language :: Chinese (Traditional)',
         'Natural Language :: Chinese (Simplified)',
+        'Natural Language :: Japanese',
         'License :: CC0 1.0 Universal (CC0 1.0) Public Domain Dedication',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.5',
@@ -34,8 +36,9 @@ setup(
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3.10',
+        'Programming Language :: JavaScript',
     ],
-    keywords='chinese natural-language-processing',
+    keywords='chinese chinese-character natural-language-processing',
     packages=find_packages('src'),
     package_dir={'': 'src'},
     package_data={
