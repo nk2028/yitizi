@@ -3,5 +3,5 @@ digraph G {
     graph [fontname=monospace]
     node [fontname=monospace]
     edge [fontname=monospace]
-    "yitizi.json" -> "yitizi.csv" [label="build/main.py"]
+    "yitizi.csv" -> "yitizi.json" [label="build/main.py"]
 }
