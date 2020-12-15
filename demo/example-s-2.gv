@@ -1,0 +1,9 @@
+digraph "Example S-2" {
+    graph [nodesep=0]
+    node [fontsize=16 fontname="一點明體"]
+    subgraph "cluster_苧" {
+        {rank=same; 苧; 苧2 [label="苧"]}
+    }
+    薴 -> 苧
+    苧2 -> 苎
+}

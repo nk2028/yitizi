@@ -1,0 +1,15 @@
+digraph "Example I-2" {
+    graph [nodesep=0.5]
+    node [fontsize=16 fontname="一點明體"]
+    edge [dir="none"]  # 交疊
+    AB -> C
+	AB -> D
+	AB -> E
+    AB -> F
+    AB -> G
+	edge [dir="none" style="dashed" constraint="false"]  # 生成
+	C -> D
+	E -> F
+    E -> G
+    F -> G
+}

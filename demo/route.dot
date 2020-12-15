@@ -1,7 +1,0 @@
-digraph G {
-    rankdir="LR"
-    graph [fontname=monospace]
-    node [fontname=monospace]
-    edge [fontname=monospace]
-    "yitizi.csv" -> "yitizi.json" [label="build/main.py"]
-}

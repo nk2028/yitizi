@@ -1,0 +1,11 @@
+digraph "Example S-1" {
+    graph [nodesep=0.125]
+    node [fontsize=16 fontname="一點明體"]
+    subgraph "cluster_幺么" {
+        {rank=same; 幺; 么}
+        edge [dir="none" style="bold"]  # 全等
+        幺 -> 么
+    }
+    edge [dir="forward"]  # 簡體
+    麼麽 -> 么
+}

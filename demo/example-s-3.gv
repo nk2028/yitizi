@@ -1,0 +1,10 @@
+digraph "Example S-3" {
+    graph [nodesep=0.5]
+    node [fontsize=16 fontname="一點明體"]
+    edge [dir="forward"]  # 簡體
+    藝 -> 艺
+	藝 -> 芸
+	蕓 -> 芸
+    edge [dir="none" style="dashed" constraint="false"]  # 生成
+	艺 -> 芸
+}

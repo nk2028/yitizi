@@ -1,0 +1,14 @@
+digraph "Example I-1" {
+    graph [nodesep=1]
+    node [fontsize=16 fontname="一點明體"]
+    splines=false
+    edge [dir="none"]  # 交疊
+    閒 -> 閑
+    閒 -> 間
+    edge [dir="forward"]  # 簡體
+    閑 -> 闲
+    間 -> 间
+	edge [dir="none" style="dashed" constraint="false"]  # 生成
+	閒 -> 闲
+	閒 -> 间
+}

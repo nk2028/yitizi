@@ -1,5 +1,0 @@
-digraph G {
-    正字 [fillcolor=grey, style=filled]
-    正字 -> 異體字1
-    正字 -> 異體字2
-}
