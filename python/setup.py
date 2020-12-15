@@ -5,14 +5,15 @@ from os import path
 
 here = path.abspath(path.dirname(__file__))
 
-assert path.exists(path.join(here, 'src/yitizi/yitizi.json')), 'You must run the build script first'
+assert path.exists(path.join(here, 'src/yitizi/yitizi.json')), \
+    'You must run the build script first'
 
 with open(path.join(here, 'README.md'), encoding='utf8') as f:
     long_description = f.read()
 
 setup(
     name='yitizi',
-    version='0.0.3',
+    version='0.1.0',
     description='Input a Chinese character. Output all the variant characters of it.',
     long_description=long_description,
     long_description_content_type='text/markdown',

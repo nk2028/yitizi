@@ -1,6 +1,6 @@
 {
   "name": "yitizi",
-  "version": "0.0.3",
+  "version": "0.1.0",
   "description": "Input a Chinese character. Output all the variant characters of it.",
   "main": "index.js",
   "scripts": {
