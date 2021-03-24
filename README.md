@@ -35,7 +35,7 @@ npm install yitizi
 ### JavaScript (browser)
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/yitizi@0.1.0"></script>
+<script src="https://cdn.jsdelivr.net/npm/yitizi@0.1.1"></script>
 ```
 
 ```javascript

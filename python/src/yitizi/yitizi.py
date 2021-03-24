@@ -10,7 +10,7 @@ with open(path.join(HERE, 'yitizi.json'), encoding='utf8') as f:
 
 def get(c):
 	'''
-	Input a Chinese character. Output all the variant characters of it.
+	Get all the variant characters of a given character.
 
 	```
 	>>> import yitizi
