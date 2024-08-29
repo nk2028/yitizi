@@ -8,21 +8,30 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
 
     # Prepare Python environment
     - name: Set up Python
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v5
       with:
-        python-version: '3.x'
+        python-version: '3.12'
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install setuptools wheel twine
+
+    # Prepare Node.js environment
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '22'
+        registry-url: https://registry.npmjs.org/
+
+    # Build
     - name: Build yitizi.json
       run: python build/main.py
 
-    # Packaging for Python
+    # Package for Python
     - name: Build for Python
       run: |
         cp LICENSE README.md python
@@ -36,14 +45,7 @@ jobs:
         python setup.py sdist bdist_wheel
         twine upload dist/*
 
-    # Prepare Node.js environment
-    - name: Setup Node.js
-      uses: actions/setup-node@v1
-      with:
-        node-version: 14
-        registry-url: https://registry.npmjs.org/
-
-    # Packaging for Node.js
+    # Package for Node.js
     - name: Build for Node.js
       run: |
         cp LICENSE README.md javascript
