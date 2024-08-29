@@ -58,20 +58,18 @@ A basic connection between two variant characters can be classified into one of 
   - If A is an equivalent variant of B, then B is an equivalent variant of A;
   - If A is an equivalent variant of B, and B is an equivalent variant of C, then A is an equivalent variant of C.
 
-- Intersecting "語義交疊": Two characters are intersecting variants if they are interchangable in certain cases. It is also commutative, and can be treated either _fully transitive_ (same as equivalent) or _per-group transitive_ (transitive only within the same row in the data table).
+- Intersecting "語義交疊": Two characters are intersecting variants if they are interchangable in certain cases. It is also commutative, but not necessarily transitive. Characters with intersecting variants are arranged in groups (rows in data files), with each group having specific meanings shared by its listed characters. A character can belong to multiple groups.
 
-  NOTE: currently only the fully transitive version is implemented).
+  Example: "閒" has two intersecting variants: "閑" and "間", listed in two groups:
 
-  Example (per-group transitive version, available soon™): "閒" has two intersecting variants: "閑" and "間", listed in two rows:
-
-  ```csv
-  #字,全等,語義交疊,簡體
-  閒,,閑,
-  閒,,間,间
-  閑,,,闲
+  ```conf
+  閒閑  # meaning "vacant"
+  閒間  # meaning "in the middle"
+  閑>闲  # simplified form (same below)
+  間>间
   ```
 
-  Then in the computed `yitizi.csv`:
+  Then in the computed `yitizi.json`:
 
   - 閒 and 閑 (闲) are variants of each other;
   - 閒 and 間 (间) are variants of each other;
@@ -81,10 +79,10 @@ A basic connection between two variant characters can be classified into one of 
 
   A more complex (though abstract) example:
 
-  ```
-  #字,全等,語義交疊
-  A,B,CD,
-  A,,EFG,
+  ```conf
+  =ＡＢ  # "=" means equivalent variants
+  ＡＣＤ
+  ＡＥＦＧ
   ```
 
   - A, B, C and D are variants of one another;
@@ -93,7 +91,7 @@ A basic connection between two variant characters can be classified into one of 
 
   ![Example I-2](demo/example-i-2.png)
 
-- Simplification "簡體": A non-transitive and asymmetric connection. A simplified character is associated only with its traditional form. The traditional form is unrelated to other types of variants of the same character.
+- Simplification "簡體": A non-transitive and asymmetric connection. A simplified character is associated only with its traditional form.
 
   Example 1: "么" is 1) a simplified form of "麼", 2) an equivalent variant of "幺"; "麼" has an equivalent variant "麽", then:
 

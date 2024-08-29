@@ -1,90 +1,148 @@
 import csv
-from itertools import chain, islice
-from typing import Dict, Optional, Set, Tuple, Union
+from typing import TextIO
 
 from .union_find import UnionFind
 
 
-# HACK 韻典的數據錯誤暫直接寫在代碼這裡
+# NOTE 韻典的數據錯誤暫直接寫在代碼這裡
 EXCLUDED_CHARS = {  # 不收入這些字的任何異體關係
-    '苎',  # 誤列為「蒙懞矇朦」全等異體
+    '苎',  # 「蒙懞矇朦苎」誤列為全等異體，應為「蒙懞」交疊、「蒙朦矇」交疊
+    '蒙',
+    '懞',
+    '矇',
+    '朦',
     '芸',  # 誤列為「藝」全等異體，應為簡體
     '弁',  # 誤列為「辨辯」等字全等異體，應為簡體
+    '皝',  # 誤列為「皓顯」交疊異體
 }
-EXCLUDED_PAIRS = {  # 不收入這些異體關係（不論關係種類）
-    ('瀋', '沉'),  # 誤列為全等異體
-    ('干', '乾'),  # 同上
-    ('榦', '乾'),  # 同上
-    ('搋', '弌'),  # 同上
+EXCLUDED_EQUIVALENT_PAIRS = {  # 不收入這些全等異體關係
+    ('瀋', '沉'),
+    ('干', '乾'),
+    ('榦', '乾'),
+    ('搋', '弌'),
+}
+
+# 忽略 OpenCC 以下繁簡對應
+EXCLUDED_OPENCC = {
+    ('閒', '闲'),  # 韻典的「閑>闲」更能有效區分「間」「閑」兩者
 }
 
 
-VariantUnionFind = UnionFind[str]
-Simplifications = Dict[str, Set[str]]
+def initialize_results(
+    equivalents: UnionFind[str] = None,
+    intersecting_groups: set[str] | None = None,
+    simplifications: dict[str, set[str]] | None = None,
+):
+    if equivalents is None:
+        equivalents = UnionFind()
+    if intersecting_groups is None:
+        intersecting_groups = set()
+    if simplifications is None:
+        simplifications = {}
+    return equivalents, intersecting_groups, simplifications
 
 
 def load_ytenx_csv(
-    file_path: Union[str, bytes],
-    vars_unionfind: VariantUnionFind,
-    simps: Simplifications,
-    use_excluded: bool = True,
-) -> None:
-    csv_file = csv.DictReader(open(file_path))
-    for row in csv_file:
+    file: TextIO,
+    equivalents: UnionFind[str] = None,
+    intersecting_groups: set[str] | None = None,
+    simplifications: dict[str, set[str]] | None = None,
+):
+    equivalents, intersecting_groups, simplifications = initialize_results(
+        equivalents, intersecting_groups, simplifications
+    )
+
+    for row in csv.DictReader(file):
         entry = row['#字']
-        vars_unionfind.add(entry)
-        var_fields = [f for f in ['全等', '語義交疊', '其他異體'] if f in row]
-        for ch in chain.from_iterable(row[f] for f in var_fields):
-            vars_unionfind.add(ch)
-            if use_excluded:
-                if entry in EXCLUDED_CHARS or ch in EXCLUDED_CHARS:
-                    continue
-                if ((entry, ch) in EXCLUDED_PAIRS
-                        or (ch, entry) in EXCLUDED_PAIRS):
-                    continue
-            vars_unionfind.union(entry, ch)
-        if (simp := row.get('簡體')) is not None:
-            for ch in simp:
-                simps.setdefault(entry, set()).add(ch)
-        if (trad := row.get('繁體')) is not None:
+
+        if entry not in EXCLUDED_CHARS and (equiv := row.get('全等')):
+            chs = [
+                ch
+                for ch in equiv
+                if ch not in EXCLUDED_CHARS
+                and (entry, ch) not in EXCLUDED_EQUIVALENT_PAIRS
+                and (ch, entry) not in EXCLUDED_EQUIVALENT_PAIRS
+            ]
+            if len(chs):
+                equivalents.add(entry)
+                for ch in chs:
+                    equivalents.add(ch)
+                    equivalents.union(entry, ch)
+
+        if inter := row.get('語義交疊', '') + row.get('其他異體', ''):
+            chs = [ch for ch in entry + inter if ch not in EXCLUDED_CHARS]
+            intersecting_groups.add(''.join(sorted(set(chs))))
+
+        if simp := row.get('簡體'):
+            simplifications.setdefault(entry, set()).update(simp)
+        if trad := row.get('繁體'):
             for ch in trad:
-                simps.setdefault(ch, set()).add(entry)
+                simplifications.setdefault(ch, set()).add(entry)
+
+    return equivalents, intersecting_groups, simplifications
 
 
 def load_ytenx(
-    vars_unionfind: Optional[VariantUnionFind] = None,
-    simps: Optional[Simplifications] = None,
-) -> Tuple[VariantUnionFind, Simplifications]:
-    if vars_unionfind is None:
-        vars_unionfind = UnionFind()
-    if simps is None:
-        simps = {}
-
-    for fpath, use_excluded in [
-        ('data/ytenx/JihThex.csv', True),
-        ('data/ytenx/ThaJihThex.csv', True),
-        ('data/yitizi.csv', False),
-    ]:
-        load_ytenx_csv(fpath, vars_unionfind, simps, use_excluded)
-
-    return vars_unionfind, simps
+    equivalents: UnionFind[str] = None,
+    intersecting_groups: set[str] | None = None,
+    simplifications: dict[str, set[str]] | None = None,
+) -> tuple[UnionFind[str], set[str], dict[str, set[str]]]:
+    res = (equivalents, intersecting_groups, simplifications)
+    for filepath in ('data/ytenx/JihThex.csv', 'data/ytenx/ThaJihThex.csv'):
+        with open(filepath) as fin:
+            res = load_ytenx_csv(fin, *res)
+    return res
 
 
-def load_opencc(simps: Optional[Simplifications] = None) -> Simplifications:
-    if simps is None:
-        simps = {}
+def load_opencc(simplifications: dict[str, set[str]] | None = None):
+    if simplifications is None:
+        simplifications = {}
 
-    opencc_data = chain(
-        open('data/opencc/TSCharacters.txt'),
-        open('data/opencc/TSPhrases.txt'),
+    for filepath in ('data/opencc/TSCharacters.txt', 'data/opencc/TSPhrases.txt'):
+        with open(filepath) as fin:
+            for line in fin:
+                t_phrase, s_phrases = line.rstrip().split('\t')
+                for s_phrase in s_phrases.split():
+                    assert len(t_phrase) == len(
+                        s_phrase
+                    ), f'Length mismatch: {repr(t_phrase)} {repr(s_phrase)}'
+                    for t, s in zip(t_phrase, s_phrase):
+                        if t != s and (t, s) not in EXCLUDED_OPENCC:
+                            simplifications.setdefault(t, set()).add(s)
+    return simplifications
+
+
+def load_yitizi_txt(
+    equivalents: UnionFind[str] = None,
+    intersecting_groups: set[str] | None = None,
+    simplifications: dict[str, set[str]] | None = None,
+):
+    equivalents, intersecting_groups, simplifications = initialize_results(
+        equivalents, intersecting_groups, simplifications
     )
-    for line in opencc_data:
-        t_phrase, s_phrases = line.rstrip().split('\t')
-        for s_phrase in s_phrases.split():
-            assert len(t_phrase) == len(s_phrase), \
-                f'Length mismatch: {repr(t_phrase)} {repr(s_phrase)}'
-            for t, s in zip(t_phrase, s_phrase):
-                if t != s:
-                    simps.setdefault(t, set()).add(s)
+    with open('data/yitizi.txt') as fin:
+        for lineno, line in enumerate(fin, 1):
+            line = line.split('#', 1)[0].strip()
+            if not line:
+                continue
+            num_ascii = sum(1 for ch in line if ch.isascii())
+            assert num_ascii <= 1
+            if num_ascii == 0:
+                intersecting_groups.add(''.join(sorted(line)))
+            elif len(line) >= 3 and line.startswith('='):
+                equivalents.add(line[1])
+                for ch in line[2:]:
+                    equivalents.add(ch)
+                    equivalents.union(line[1], ch)
+            elif len(line) >= 3 and line[1] == '>':
+                simplifications.setdefault(line[0], set()).update(line[2:])
+            else:
+                raise ValueError(f'line {lineno}: unknown format: {line}')
+    return equivalents, intersecting_groups, simplifications
 
-    return simps
+
+def load_all():
+    equiv, inter, simp = load_ytenx()
+    load_opencc(simp)
+    load_yitizi_txt(equiv, inter, simp)
+    return equiv, inter, simp

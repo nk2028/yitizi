@@ -1,51 +1,38 @@
-#! /usr/bin/env python3
+#!/usr/bin/env pyton
 
 import os
 import sys
-sys.path.append(os.path.dirname(__file__))  # nopep8
+
+sys.path.append(os.path.dirname(__file__))
 
 import json
-from typing import Dict, List, Set
 
-from build_lib import (
-    load_ytenx,
-    load_opencc,
-    make_yitizi_groups,
-    make_yitizi_json
-)
+from build_lib import UnionFind, load_all, make_graph, sorted_graph
 
 
-vars_unionfind, simps = load_ytenx()
-load_opencc(simps)
-varsets = vars_unionfind.dump()
-
-yitizi_groups = make_yitizi_groups(varsets, simps)
-yitizi_json = make_yitizi_json(yitizi_groups)
-
-
-def save_json(yitizi_json: Dict[str, str] = yitizi_json) -> None:
-    json.dump(yitizi_json, open('yitizi.json', 'w'),
-              ensure_ascii=False, indent=0, separators=(',', ':'))
-
-
-def save_files(
-    varsets: Dict[str, List[str]] = varsets,
-    simps: Dict[str, Set[str]] = simps,
-    yitizi_groups: List[str] = yitizi_groups,
-) -> None:
-    with open('yitizi-varsets', 'w') as outfile:
-        for varset in varsets.values():
-            if len(varset) == 1:
+def dump(equiv: UnionFind[str], inter: set[str], simp: dict[str, set[str]]):
+    with open('yitizi-equiv', 'w') as fout:
+        dumped = equiv.dump()
+        for chs in dumped.values():
+            if len(chs) == 1:
                 continue
-            print(''.join(varset), file=outfile)
-
-    with open('yitizi-simps', 'w') as outfile:
-        for tchar, schars in simps.items():
-            print(tchar, ''.join(sorted(schars)), sep='', file=outfile)
-
-    with open('yitizi-groups', 'w') as outfile:
-        for groups_line in yitizi_groups:
-            print(groups_line, file=outfile)
+            print('=', ''.join(chs), sep='', file=fout)
+    with open('yitizi-inter', 'w') as fout:
+        for chs in inter:
+            print(chs, file=fout)
+    with open('yitizi-simp', 'w') as fout:
+        for t, ss in simp.items():
+            print(t, '>', ''.join(ss), sep='', file=fout)
 
 
-save_json()
+def main():
+    data = load_all()
+    #dump(*data)
+    graph = sorted_graph(make_graph(*data))
+    out_data = {k: ''.join(v) for k, v in graph.items()}
+    with open('yitizi.json', 'w', newline='') as fout:
+        json.dump(out_data, fout, ensure_ascii=False, indent=0, separators=(',', ':'))
+
+
+if __name__ == '__main__':
+    main()

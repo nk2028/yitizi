@@ -16,6 +16,9 @@ class UnionFind(Generic[T]):
 
     def __len__(self) -> int:
         return len(self._elems)
+    
+    def __contains__(self, elem: T) -> bool:
+        return elem in self._index
 
     def add(self, elem: T) -> bool:
         if elem in self._index:
