@@ -118,8 +118,8 @@ A basic connection between two variant characters can be classified into one of 
 
 ### Data source
 
-- `data/ytenx`: From [BYVoid/ytenx](https://github.com/BYVoid/ytenx/tree/39c2ba1a51d16269241e00d7c0fdf698bdf68326/ytenx/sync/jihthex)
-- `data/opencc`: From [BYVoid/OpenCC](https://github.com/BYVoid/OpenCC/tree/7a60db1b098e87e81bb489aa66bcbfa4ab3cd576/data/dictionary)
+- `data/ytenx`: From [BYVoid/ytenx](https://github.com/BYVoid/ytenx/tree/d95d2477f031377e9a1ef022fa574287184bcce8/ytenx/sync/jihthex)
+- `data/opencc`: From [BYVoid/OpenCC](https://github.com/BYVoid/OpenCC/tree/556ed22496d650bd0b13b6c163be9814637970ae/data/dictionary)
 
 ## Note for developers
 
