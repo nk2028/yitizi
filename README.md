@@ -35,12 +35,22 @@ npm install yitizi
 ### JavaScript (browser)
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/yitizi@0.1.2"></script>
+<script src="https://cdn.jsdelivr.net/npm/yitizi@0.1.3"></script>
 ```
 
 ```javascript
 > Yitizi.get('和');
 [ '咊', '龢' ]
+```
+
+### JavaScript (browser, ESM)
+
+```html
+<script type="module">
+  import Yitizi from 'https://esm.run/yitizi@0.1.3';
+
+  Yitizi.get('和'); // => [ '咊', '龢' ]
+</script>
 ```
 
 ## Design
