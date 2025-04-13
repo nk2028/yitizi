@@ -1,15 +1,12 @@
-from typing import Dict, Generic, Iterable, List, TypeVar
+from typing import Iterable
 
 
-T = TypeVar('T')
-
-
-class UnionFind(Generic[T]):
+class UnionFind[T]:
 
     def __init__(self, it: Iterable[T] = None):
-        self._elems: List[T] = []
-        self._index: Dict[T, int] = {}
-        self._uf: List[int] = []
+        self._elems = list[T]()
+        self._index = dict[T, int]()
+        self._uf = list[int]()
         if it is not None:
             for e in it:
                 self.add(e)
@@ -39,8 +36,8 @@ class UnionFind(Generic[T]):
         return (self._find_idx(self._index[elem1])
                 == self._find_idx(self._index[elem2]))
 
-    def dump(self) -> Dict[T, List[T]]:
-        res: Dict[T, List[T]] = {}
+    def dump(self) -> dict[T, list[T]]:
+        res = dict[T, list[T]]()
         for e in self._elems:
             res.setdefault(self.find(e), []).append(e)
         return res

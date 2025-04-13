@@ -1,14 +1,13 @@
 from collections.abc import Iterable
-from typing import Sequence, TypeVar
+from typing import Sequence
 
 from .union_find import UnionFind
 
 
-T = TypeVar('T')
-Graph = dict[T, set[T]]
+type Graph[T] = dict[T, set[T]]
 
 
-def connect(graph: Graph[T], u: T, v: T):
+def connect[T](graph: Graph[T], u: T, v: T):
     if u == v:
         graph.setdefault(u, set())
         return
@@ -16,19 +15,23 @@ def connect(graph: Graph[T], u: T, v: T):
     graph.setdefault(v, set()).add(u)
 
 
-def connect_all(graph: Graph[T], vertices: Sequence[T]):
+def connect_all[T](graph: Graph[T], vertices: Iterable[T]):
+    if not isinstance(vertices, Sequence):
+        vertices = list(vertices)
     for i, u in enumerate(vertices[:-1]):
         for v in vertices[i + 1 :]:
             connect(graph, u, v)
 
 
-def connect_groups(graph: Graph[T], us: Iterable[T], vs: Iterable[T]):
+def connect_groups[T](graph: Graph[T], us: Iterable[T], vs: Iterable[T]):
     for u in us:
         for v in vs:
             connect(graph, u, v)
 
 
-def get_group(union_find: UnionFind[T], dumped: dict[T, list[T]], elem: T) -> list[T]:
+def get_group[T](
+    union_find: UnionFind[T], dumped: dict[T, list[T]], elem: T
+) -> list[T]:
     if elem in union_find:
         return dumped[union_find.find(elem)]
     else:
@@ -39,7 +42,7 @@ def make_graph(
     equivalents: UnionFind[str],
     intersecting_groups: set[str],
     simplifications: dict[str, set[str]],
-) -> Graph:
+) -> Graph[str]:
     graph: Graph[str] = {}
 
     equiv_groups = equivalents.dump()
@@ -64,5 +67,5 @@ def make_graph(
     return graph
 
 
-def sorted_graph(graph: Graph[T]) -> dict[T, list[T]]:
+def sorted_graph[T](graph: Graph[T]) -> dict[T, list[T]]:
     return {k: sorted(graph[k]) for k in sorted(graph)}
